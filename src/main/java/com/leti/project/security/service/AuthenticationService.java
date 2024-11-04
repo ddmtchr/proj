@@ -1,18 +1,16 @@
 package com.leti.project.security.service;
 
-import com.leti.project.dto.JwtResponse;
-import com.leti.project.dto.LoginRequest;
-import com.leti.project.dto.RegisterRequest;
+import com.leti.project.dto.request.LoginRequest;
+import com.leti.project.dto.request.RegisterRequest;
+import com.leti.project.dto.response.JwtResponse;
 import com.leti.project.security.entity.Role;
 import com.leti.project.security.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +24,7 @@ public class AuthenticationService {
         var user = User.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.ROLE_EMPLOYEE) // todo
+                .role(Role.valueOf(request.getRole()))
                 .build();
 
         User createdUser = userService.create(user);
@@ -35,8 +33,7 @@ public class AuthenticationService {
         return new JwtResponse(jwt,
                 createdUser.getId(),
                 createdUser.getUsername(),
-                createdUser.getAuthorities()
-                        .stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()));
+                createdUser.getRole().name());
     }
 
     public JwtResponse login(LoginRequest request) {
@@ -52,7 +49,6 @@ public class AuthenticationService {
         return new JwtResponse(jwt,
                 user.getId(),
                 user.getUsername(),
-                user.getAuthorities()
-                        .stream().map(GrantedAuthority::getAuthority).collect(Collectors.toSet()));
+                user.getRole().name());
     }
 }

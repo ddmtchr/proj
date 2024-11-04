@@ -1,9 +1,10 @@
 package com.leti.project.security.controller;
 
-import com.leti.project.dto.JwtResponse;
-import com.leti.project.dto.LoginRequest;
-import com.leti.project.dto.RegisterRequest;
+import com.leti.project.dto.request.LoginRequest;
+import com.leti.project.dto.request.RegisterRequest;
+import com.leti.project.dto.response.JwtResponse;
 import com.leti.project.security.service.AuthenticationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,12 +18,12 @@ public class AuthController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
-    public JwtResponse signUp(@RequestBody RegisterRequest request) {
+    public JwtResponse signUp(@RequestBody @Valid RegisterRequest request) {
         return authenticationService.register(request);
     }
 
     @PostMapping("/login")
-    public JwtResponse signIn(@RequestBody LoginRequest request) {
+    public JwtResponse signIn(@RequestBody @Valid LoginRequest request) {
         return authenticationService.login(request);
     }
 }

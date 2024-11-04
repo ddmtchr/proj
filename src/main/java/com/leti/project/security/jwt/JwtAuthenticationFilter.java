@@ -68,9 +68,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (MalformedJwtException e) {
             logger.error("Invalid JWT");
         } catch (SignatureException e) {
-            logger.error("JWT Signature error");
+            logger.error("JWT signature error");
         } catch (ExpiredJwtException e) {
-            logger.error("JWT token is expired");
+            logger.error("JWT is expired");
         } catch (RuntimeException e) {
             logger.error("Unknown error with JWT");
         }

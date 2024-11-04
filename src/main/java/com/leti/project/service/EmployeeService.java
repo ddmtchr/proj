@@ -12,7 +12,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmployeeService {
     private final EmployeeRepository employeeRepository;
-//    private final List<Employee> mockData = new ArrayList<>(Arrays.asList(new Employee(1L), new Employee(2L), new Employee(3L)));
 
     public List<?> getAllEmployees() {
         return employeeRepository.findAll();

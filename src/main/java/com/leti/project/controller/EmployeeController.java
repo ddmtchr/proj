@@ -2,6 +2,7 @@ package com.leti.project.controller;
 
 import com.leti.project.domain.Employee;
 import com.leti.project.service.EmployeeService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +27,12 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<Employee> addEmployee(@RequestBody Employee employee) {
+    public ResponseEntity<Employee> addEmployee(@RequestBody @Valid Employee employee) {
         return new ResponseEntity<>(employeeService.addEmployee(employee), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> editEmployee(@PathVariable Long id, @RequestBody Employee employee) {
+    public ResponseEntity<Void> editEmployee(@PathVariable Long id, @RequestBody @Valid Employee employee) {
         employeeService.editEmployee(id, employee);
         return new ResponseEntity<>(HttpStatus.OK);
     }
