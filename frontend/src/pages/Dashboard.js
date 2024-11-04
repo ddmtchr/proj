@@ -1,25 +1,34 @@
-import React, { useState } from "react";
+import React from "react";
 import EmployeeDashboard from "../components/EmployeeDashboard";
 import HRDashboard from "../components/HRDashboard";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../api/auth";
 
 function Dashboard() {
-    const [role, setRole] = useState("employee");
+    const navigate = useNavigate();
+    const username = localStorage.getItem("username");
+    const role = localStorage.getItem("role");
+
+    const handleLogout = () => {
+        logout();
+        localStorage.removeItem("username");
+        localStorage.removeItem("role");
+        navigate("/");
+    };
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-            <div className="mb-4">
-                <label className="mr-2">Select Role:</label>
-                <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    className="border p-2 rounded"
+            <div className="flex justify-between items-center">
+                <h1 className="text-2xl font-bold">Dashboard</h1>
+                <button
+                    onClick={handleLogout}
+                    className="bg-red-500 text-white py-1 px-4 rounded hover:bg-red-600"
                 >
-                    <option value="employee">Employee</option>
-                    <option value="hr">HR Manager</option>
-                </select>
+                    Logout
+                </button>
             </div>
-            {role === "employee" ? <EmployeeDashboard /> : <HRDashboard />}
+            <p className="text-gray-700 mb-4">Welcome, {username} ({role})</p>
+            {role === "ROLE_EMPLOYEE" ? <EmployeeDashboard /> : <HRDashboard />}
         </div>
     );
 }
