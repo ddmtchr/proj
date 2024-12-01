@@ -34,6 +34,7 @@ function UserProfile() {
             {accessorKey: "level", header: "Уровень", maxWidth: "50px"},
             {accessorKey: "status", header: "Статус", maxWidth: "60px"},
             {accessorKey: "salary", header: "Зарплата", maxWidth: "50px"},
+            {accessorKey: "vacationDays", header: "Дни отпуска", maxWidth: "50px"},
         ],
         []
     );

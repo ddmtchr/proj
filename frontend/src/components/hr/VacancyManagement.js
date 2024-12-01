@@ -13,6 +13,7 @@ function VacancyManagement({vacancies, onAdd, onEdit, onDelete, onToggleStatus, 
             {header: "Статус", accessorKey: "status", maxWidth: "50px"},
             {header: "Дата публикации", accessorKey: "postedDate", maxWidth: "60px"},
             {header: "Отдел", accessorKey: "department", maxWidth: "60px"},
+            {header: "Зарплата", accessorKey: "salary", maxWidth: "60px"},
             {
                 header: "Действия",
                 cell: ({row}) => (

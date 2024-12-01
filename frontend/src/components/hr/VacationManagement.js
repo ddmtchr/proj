@@ -93,7 +93,7 @@ function VacationManagement({vacations, onAdd, onEdit, onApprove, onReject, onSt
 
     const handleReject = () => {
         if (rejectReason.trim() === "") {
-            alert("Please enter a reason for rejection.");
+            alert("Введите причину отклонения");
             return;
         }
         onReject(vacationToReject.id, rejectReason);
@@ -136,25 +136,25 @@ function VacationManagement({vacations, onAdd, onEdit, onApprove, onReject, onSt
                 <div
                     className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50">
                     <div className="bg-white p-6 rounded shadow-lg w-96">
-                        <h3 className="text-lg font-bold mb-4">Enter Reject Reason</h3>
+                        <h3 className="text-lg font-bold mb-4">Причина отклонения</h3>
                         <textarea
                             value={rejectReason}
                             onChange={(e) => setRejectReason(e.target.value)}
                             className="w-full p-2 border border-gray-300 rounded mb-4"
-                            placeholder="Enter reason for rejection"
+                            placeholder="Введите причину отклонения"
                         />
                         <div className="flex gap-2">
                             <button
                                 className="bg-gray-500 text-white py-1 px-3 rounded"
                                 onClick={() => setShowRejectModal(false)}
                             >
-                                Cancel
+                                Отмена
                             </button>
                             <button
                                 className="bg-red-500 text-white py-1 px-3 rounded"
                                 onClick={handleReject}
                             >
-                                Submit
+                                ОК
                             </button>
                         </div>
                     </div>

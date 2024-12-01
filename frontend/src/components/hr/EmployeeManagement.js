@@ -1,10 +1,19 @@
-import React from "react";
+import React, {useState} from "react";
 import {PencilIcon, TrashIcon} from "@heroicons/react/24/outline";
 import Table from "../Table";
 
 const API_BASE_URL = "http://localhost:8080/api"
 
 function EmployeeManagement({employees, onAdd, onEdit, onDelete, onDismiss}) {
+    const [showDismissModal, setShowDismissModal] = useState(false);
+    const [dismissalReason, setDismissalReason] = useState("");
+    const [employeeToDismiss, setEmployeeToDismiss] = useState(null);
+
+    const openDismissModal = (employee) => {
+        setEmployeeToDismiss(employee);
+        setShowDismissModal(true);
+    }
+
     const columns = [
         {accessorKey: "id", header: "ID", maxWidth: "20px"},
         {accessorKey: "fullName", header: "ФИО", maxWidth: "100px"},
@@ -13,6 +22,7 @@ function EmployeeManagement({employees, onAdd, onEdit, onDelete, onDismiss}) {
         {accessorKey: "position", header: "Должность", maxWidth: "80px"},
         {accessorKey: "level", header: "Уровень", maxWidth: "50px"},
         {accessorKey: "status", header: "Статус", maxWidth: "60px"},
+        {accessorKey: "dismissalReason", header: "Причина увольнения", maxWidth: "100px"},
         {accessorKey: "salary", header: "Зарплата", maxWidth: "50px"},
         {
             id: "actions",
@@ -24,7 +34,7 @@ function EmployeeManagement({employees, onAdd, onEdit, onDelete, onDismiss}) {
                             <>
                                 <button
                                     className="bg-red-500 text-white py-1 px-3 rounded"
-                                    onClick={() => handleDismiss(row.original)}
+                                    onClick={() => openDismissModal(row.original)}
                                 >
                                     Уволить
                                 </button>
@@ -58,8 +68,13 @@ function EmployeeManagement({employees, onAdd, onEdit, onDelete, onDismiss}) {
         onEdit(employee);
     };
 
-    const handleDismiss = (employee) => {
-        onDismiss(employee.id);
+    const handleDismiss = () => {
+        if (dismissalReason.trim() === "") {
+            alert("Введите причину увольнения");
+            return;
+        }
+        onDismiss(employeeToDismiss.id, dismissalReason);
+        setShowDismissModal(false)
     };
 
     const handleDelete = (id) => {
@@ -78,6 +93,34 @@ function EmployeeManagement({employees, onAdd, onEdit, onDelete, onDismiss}) {
                 </button>
             </div>
             <Table columns={columns} data={employees}/>
+            {showDismissModal && (
+                <div
+                    className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50">
+                    <div className="bg-white p-6 rounded shadow-lg w-96">
+                        <h3 className="text-lg font-bold mb-4">Причина увольнения</h3>
+                        <textarea
+                            value={dismissalReason}
+                            onChange={(e) => setDismissalReason(e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded mb-4"
+                            placeholder="Введите причину увольнения"
+                        />
+                        <div className="flex gap-2">
+                            <button
+                                className="bg-gray-500 text-white py-1 px-3 rounded"
+                                onClick={() => setShowDismissModal(false)}
+                            >
+                                Отмена
+                            </button>
+                            <button
+                                className="bg-red-500 text-white py-1 px-3 rounded"
+                                onClick={handleDismiss}
+                            >
+                                ОК
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

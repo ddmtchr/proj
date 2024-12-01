@@ -67,8 +67,8 @@ function HRDashboard() {
             .catch((error) => console.error("Error deleting employee: ", error))
     };
 
-    const handleDismissEmployee = async (id) => {
-        await axios.put(API_BASE_URL + `/employee/${id}/dismiss`)
+    const handleDismissEmployee = async (id, reason) => {
+        await axios.put(API_BASE_URL + `/employee/${id}/dismiss?reason=${reason}`)
             .then((response) => {
                 refreshData("/employee")
             })
