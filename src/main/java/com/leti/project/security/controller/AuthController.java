@@ -23,7 +23,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public JwtResponse register(@RequestBody @Valid LoginRequest request) {
+    public JwtResponse login(@RequestBody @Valid LoginRequest request) {
         return authenticationService.login(request);
     }
 }

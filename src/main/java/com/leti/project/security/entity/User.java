@@ -1,5 +1,6 @@
 package com.leti.project.security.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,6 +27,7 @@ public class User implements UserDetails {
     private String username;
 
     @Column(name = "password", nullable = false)
+    @JsonIgnore
     private String password;
 
     @Enumerated(EnumType.STRING)

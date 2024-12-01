@@ -25,6 +25,9 @@ export const register = async (username, password, role) => {
 
 export const logout = () => {
     removeToken();
+    localStorage.removeItem("jwt");
+    localStorage.removeItem("username");
+    localStorage.removeItem("role");
 };
 
 export const saveToken = (token) => {

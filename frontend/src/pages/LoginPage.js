@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { login, register, saveToken } from "../api/auth";
+import React, {useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {login, register, saveToken} from "../api/auth";
 
 const ROLE_PREFIX = "ROLE_";
 

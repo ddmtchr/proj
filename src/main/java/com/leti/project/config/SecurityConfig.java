@@ -44,10 +44,17 @@ public class SecurityConfig {
                 }))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/employee/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/employee/**").authenticated()
                         .requestMatchers("/api/employee/**").hasRole("HR")
+                        .requestMatchers("/api/candidate/**").hasRole("HR")
+                        .requestMatchers("/api/vacancy/**").hasRole("HR")
+                        .requestMatchers("/api/vacation/**").authenticated()
+
                         .anyRequest().authenticated())
+//                        .anyRequest().permitAll())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
