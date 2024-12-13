@@ -1,6 +1,8 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {login, register, saveToken} from "../api/auth";
+import useNotification from "../components/useNotification";
+import Notification from "../components/Notification";
 
 const ROLE_PREFIX = "ROLE_";
 
@@ -10,23 +12,26 @@ function LoginPage() {
     const [password, setPassword] = useState("");
     const [role, setRole] = useState("EMPLOYEE");
     const [error, setError] = useState(null);
+    const {notifications, addNotification, removeNotification} = useNotification();
 
     const navigate = useNavigate();
 
     const handleAuth = async () => {
-        try {
-            if (isLogin) {
-                const data = await login(username, password);
-                saveToken(data.jwt);
-                localStorage.setItem("username", data.username);
-                localStorage.setItem("role", data.role);
-                navigate("/dashboard");
-            } else {
-                await register(username, password, ROLE_PREFIX + role);
-                setIsLogin(true);
-            }
-        } catch (err) {
-            setError("Ошибка авторизации или регистрации. Проверьте данные.");
+        if (isLogin) {
+            await login(username, password).then(data => {
+                    saveToken(data.jwt);
+                    localStorage.setItem("username", data.username);
+                    localStorage.setItem("role", data.role);
+                    navigate("/dashboard");
+                }
+            ).catch(e => addNotification("Ошибка авторизации или регистрации. Проверьте данные.", "error"));
+
+        } else {
+            await register(username, password, ROLE_PREFIX + role).then(data => {
+                    addNotification("Вы успешно зарегистрировались", "success")
+                }
+            ).catch(e => addNotification("Ошибка авторизации или регистрации. Проверьте данные.", "error"));
+            setIsLogin(true);
         }
     };
 
@@ -76,6 +81,7 @@ function LoginPage() {
                     </p>
                 </div>
             </div>
+            <Notification notifications={notifications} removeNotification={removeNotification}/>
         </div>
     );
 }

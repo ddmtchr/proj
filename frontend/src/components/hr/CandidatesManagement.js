@@ -6,8 +6,8 @@ const API_BASE_URL = "http://localhost:8080/api"
 
 function CandidatesManagement({ candidates, onAdd, onEdit, onDelete }) {
     const columns = [
-        { header: "ID", accessorKey: "id", maxWidth: "20px" },
-        { header: "ФИО", accessorKey: "fullName", maxWidth: "100px" },
+        { header: "ID", accessorKey: "id", maxWidth: "20px", enableSorting: true },
+        { header: "ФИО", accessorKey: "fullName", maxWidth: "100px", enableSorting: true },
         { header: "Email", accessorKey: "email", maxWidth: "80px" },
         { header: "Статус", accessorKey: "status", maxWidth: "70px" },
         {

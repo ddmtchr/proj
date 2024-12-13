@@ -8,6 +8,7 @@ function VacationManagement({vacations, onAdd, onEdit, onApprove, onReject, onSt
     const [showRejectModal, setShowRejectModal] = useState(false);
     const [rejectReason, setRejectReason] = useState("");
     const [vacationToReject, setVacationToReject] = useState(null);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const columns = useMemo(
         () => [
@@ -93,11 +94,12 @@ function VacationManagement({vacations, onAdd, onEdit, onApprove, onReject, onSt
 
     const handleReject = () => {
         if (rejectReason.trim() === "") {
-            alert("Введите причину отклонения");
+            setErrorMessage("Введите причину отклонения");
             return;
         }
         onReject(vacationToReject.id, rejectReason);
         setShowRejectModal(false)
+        setErrorMessage("")
     };
 
     const handleStart = (vacation) => {
@@ -139,10 +141,18 @@ function VacationManagement({vacations, onAdd, onEdit, onApprove, onReject, onSt
                         <h3 className="text-lg font-bold mb-4">Причина отклонения</h3>
                         <textarea
                             value={rejectReason}
-                            onChange={(e) => setRejectReason(e.target.value)}
-                            className="w-full p-2 border border-gray-300 rounded mb-4"
+                            onChange={(e) => {
+                                setRejectReason(e.target.value);
+                                if (e.target.value.trim() !== "") {
+                                    setErrorMessage("");
+                                }
+                            }}
+                            className="w-full p-2 border border-gray-300 rounded mb-1"
                             placeholder="Введите причину отклонения"
                         />
+                        {errorMessage && (
+                            <p className="text-red-500 text-sm mb-4">{errorMessage}</p>
+                        )}
                         <div className="flex gap-2">
                             <button
                                 className="bg-gray-500 text-white py-1 px-3 rounded"

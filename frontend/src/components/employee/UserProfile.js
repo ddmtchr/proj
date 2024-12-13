@@ -9,12 +9,11 @@ function UserProfile() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Загрузка данных профиля
     useEffect(() => {
         const fetchProfileData = async () => {
             try {
                 const response = await axios.get(`${API_BASE_URL}/employee/me`);
-                setProfileData([response.data]); // Преобразуем объект в массив для таблицы
+                setProfileData([response.data]);
                 setLoading(false);
             } catch (err) {
                 setError("Не удалось загрузить данные профиля.");

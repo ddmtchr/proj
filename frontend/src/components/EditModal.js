@@ -34,24 +34,33 @@ const formConfigurations = {
     ]
 };
 
+const russian = {
+    employee: "Сотрудник изменен успешно",
+    vacation: "Отпуск изменен успешно",
+    vacancy: "Вакансия изменена успешно",
+    candidate: "Кандидат изменен успешно"
+}
 
-function EditModal({ type, data, onClose, onSuccess, nonEditableFields }) {
+function EditModal({ type, data, onClose, onSuccess, onError, nonEditableFields }) {
     const [formData, setFormData] = useState(data);
     const formFields = formConfigurations[type] || [];
 
-    // Обработчик изменения полей ввода
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
 
-    // Отправка изменений
     const handleSubmit = async () => {
         try {
             await axios.put(
                 `${API_BASE_URL}/${type}/${formData.id}`,
-                formData);
-            onSuccess(`/${type}`); // Обновить данные
+                formData).then(r => {
+                    onSuccess(russian[type]);
+                }
+
+            ).catch(e =>
+                onError("Ошибка при изменении")
+            );
             onClose(); // Закрыть модальное окно
         } catch (error) {
             console.error(`Error updating ${type}:`, error);

@@ -15,6 +15,7 @@ import java.time.LocalDate;
 @Setter
 public class EmployeeResponseDTO {
     private Long id;
+    private String username;
     private String fullName;
     private LocalDate birthDate;
     private String phone;

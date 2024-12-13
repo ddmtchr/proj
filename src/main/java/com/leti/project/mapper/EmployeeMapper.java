@@ -16,6 +16,7 @@ public interface EmployeeMapper {
     @Mapping(target = "user", ignore = true)
     Employee toEntity(EmployeeRequestDTO requestDTO);
 
+    @Mapping(target = "username", source = "user.username")
     EmployeeResponseDTO toResponseDTO(Employee e);
 
     @Mapping(target = "id", ignore = true)

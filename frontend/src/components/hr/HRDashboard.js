@@ -7,6 +7,8 @@ import axios from "axios";
 import EditModal from "../EditModal";
 import AddModal from "../AddModal";
 import UserProfile from "../employee/UserProfile";
+import Notification from "../Notification";
+import useNotification from "../useNotification";
 
 const API_BASE_URL = "http://localhost:8080/api"
 
@@ -24,6 +26,7 @@ function HRDashboard() {
     const [editModalData, setEditModalData] = useState(null);
     const [vacancyId, setVacancyId] = useState(null);
     const [currentType, setCurrentType] = useState(null);
+    const { notifications, addNotification, removeNotification } = useNotification();
 
     const nonEditableFieldsByTab = {
         employee: ["id", "dismissalReason", "dismissalDate"],
@@ -50,6 +53,20 @@ function HRDashboard() {
         }
     }
 
+    const handleSuccessModal = (message) => {
+        addNotification(message, "success");
+        setIsAddModalOpen(false)
+        setEditModalData(null)
+        refreshData(`/${activeTab}`)
+    };
+
+    const handleFailureModal = (message) => {
+        addNotification(message, "error");
+        setIsAddModalOpen(false)
+        setEditModalData(null)
+        refreshData(`/${activeTab}`)
+    };
+
     const handleAdd = (type) => {
         setCurrentType(type);
         setIsAddModalOpen(true);
@@ -63,16 +80,18 @@ function HRDashboard() {
         await axios.delete(API_BASE_URL + `/employee/${id}`)
             .then((response) => {
                 refreshData("/employee")
+                addNotification(`Сотрудник ${id} удален`, "success")
             })
-            .catch((error) => console.error("Error deleting employee: ", error))
+            .catch((error) => addNotification(`Ошибка при удалении сотрудника`, "error"))
     };
 
     const handleDismissEmployee = async (id, reason) => {
         await axios.put(API_BASE_URL + `/employee/${id}/dismiss?reason=${reason}`)
             .then((response) => {
                 refreshData("/employee")
+                addNotification(`Сотрудник ${id} уволен`, "success")
             })
-            .catch((error) => console.error("Error dismissing employee: ", error))
+            .catch((error) => addNotification(`Ошибка при увольнении сотрудника`, "error"))
     };
 
     const handleEditVacation = (vacation) => {
@@ -83,50 +102,50 @@ function HRDashboard() {
         await axios
             .put(API_BASE_URL + `/vacation/${id}/approve`)
             .then(() => {
-                console.log(`Vacation ${id} approved`);
+                addNotification(`Отпуск ${id} согласован`, "success")
                 refreshData("/vacation")
             })
-            .catch((error) => console.error("Error approving vacation:", error));
+            .catch((error) => addNotification(`Ошибка при согласовании отпуска`, "error"));
     };
 
     const handleRejectVacation = (id, reason) => {
         axios
-            .put(API_BASE_URL + `/vacation/${id}/reject`, {reason: reason})
+            .put(API_BASE_URL + `/vacation/${id}/reject?reason=${reason}`)
             .then(() => {
-                console.log(`Vacation ${id} rejected`);
+                addNotification(`Отпуск ${id} отклонен`, "success")
                 refreshData("/vacation")
             })
-            .catch((error) => console.error("Error rejecting vacation:", error));
+            .catch((error) => addNotification(`Ошибка при отклонении отпуска`, "error"));
     };
 
     const handleStartVacation = (id) => {
         axios
             .put(API_BASE_URL + `/vacation/${id}/start`)
             .then(() => {
-                console.log(`Vacation ${id} started`);
+                addNotification(`Отпуск ${id} начат`, "success")
                 refreshData("/vacation")
             })
-            .catch((error) => console.error("Error starting vacation:", error));
+            .catch((error) => addNotification(`Ошибка при старте отпуска`, "error"));
     };
 
     const handleFinishVacation = (id) => {
         axios
             .put(API_BASE_URL + `/vacation/${id}/finish`)
             .then(() => {
-                console.log(`Vacation ${id} finished`);
+                addNotification(`Отпуск ${id} завершен`, "success")
                 refreshData("/vacation")
             })
-            .catch((error) => console.error("Error finishing vacation:", error));
+            .catch((error) => addNotification(`Ошибка при завершении отпуска`, "error"));
     };
 
     const handleDeleteVacation = (id) => {
         axios
             .delete(API_BASE_URL + `/vacation/${id}`)
             .then(() => {
-                console.log(`Vacation ${id} deleted`);
+                addNotification(`Отпуск ${id} удален`, "success")
                 refreshData("/vacation")
             })
-            .catch((error) => console.error("Error deleting vacation:", error));
+            .catch((error) => addNotification(`Ошибка при удалении отпуска`, "error"));
     };
 
     const handleEditVacancy = (vacancy) => {
@@ -137,10 +156,10 @@ function HRDashboard() {
         axios
             .delete(API_BASE_URL + `/vacancy/${id}`)
             .then(() => {
-                console.log(`Vacancy ${id} deleted`);
+                addNotification(`Вакансия ${id} удалена`, "success")
                 refreshData("/vacancy")
             })
-            .catch((error) => console.error("Error deleting vacancy:", error));
+            .catch((error) => addNotification(`Ошибка при удалении вакансии`, "error"));
     };
 
     const handleToggleStatusVacancy = (vacancy) => {
@@ -149,18 +168,18 @@ function HRDashboard() {
             axios
                 .put(API_BASE_URL + `/vacancy/${vacancy.id}/reopen`)
                 .then(() => {
-                    console.log(`Vacancy ${vacancy.id} updated to ${newStatus}`);
+                    addNotification(`Вакансия ${id} обновлена (${newStatus})`, "success")
                     refreshData("/vacancy")
                 })
-                .catch((error) => console.error("Error updating vacancy status:", error));
+                .catch((error) => addNotification(`Ошибка при обновлении вакансии`, "error"));
         } else {
             axios
                 .put(API_BASE_URL + `/vacancy/${vacancy.id}/close`)
                 .then(() => {
-                    console.log(`Vacancy ${vacancy.id} updated to ${newStatus}`);
+                    addNotification(`Вакансия ${id} обновлена (${newStatus})`, "success")
                     refreshData("/vacancy")
                 })
-                .catch((error) => console.error("Error updating vacancy status:", error));
+                .catch((error) => addNotification(`Ошибка при обновлении вакансии`, "error"));
         }
     }
 
@@ -185,9 +204,10 @@ function HRDashboard() {
             .delete(API_BASE_URL + `/candidate/${id}`)
             .then(() => {
                 console.log(`Candidate ${id} deleted`);
+                addNotification(`Кандидат ${id} удален`, "success")
                 refreshData("/candidate")
             })
-            .catch((error) => console.error("Error deleting candidate:", error));
+            .catch((error) => addNotification(`Ошибка при удалении кандидата`, "error"));
     };
 
     const handleCloseModal = () => {
@@ -342,7 +362,8 @@ function HRDashboard() {
                     type={editModalData.type}
                     data={editModalData.data}
                     onClose={handleCloseModal}
-                    onSuccess={refreshData} // Обновить данные после успешного редактирования
+                    onSuccess={handleSuccessModal} // Обновить данные после успешного редактирования
+                    onError={handleFailureModal} // Обновить данные после успешного редактирования
                     nonEditableFields={nonEditableFieldsByTab[activeTab]}
                 />
             )}
@@ -350,11 +371,13 @@ function HRDashboard() {
                 <AddModal
                     type={activeTab}
                     onClose={handleCloseAddModal}
-                    onSuccess={refreshData}
+                    onSuccess={handleSuccessModal}
+                    onError={handleFailureModal}
                     availableUserIds={availableUserIds}
                     availableVacancyIds={availableVacancyIds}
                 />
             )}
+            <Notification notifications={notifications} removeNotification={removeNotification} />
         </div>
     );
 }

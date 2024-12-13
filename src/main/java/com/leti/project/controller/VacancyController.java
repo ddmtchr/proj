@@ -27,7 +27,7 @@ public class VacancyController {
         return ResponseEntity.ok(vacancyService.getVacancyById(id));
     }
 
-    @PostMapping("/open")
+    @PostMapping
     public ResponseEntity<VacancyResponseDTO> openVacancy(@RequestBody @Valid VacancyRequestDTO requestDTO) {
         return new ResponseEntity<>(vacancyService.openVacancy(requestDTO), HttpStatus.CREATED);
     }

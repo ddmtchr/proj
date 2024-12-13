@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import useNotification from "./useNotification";
+import Notification from "./Notification";
 
 const API_BASE_URL = "http://localhost:8080/api";
 const formConfigurations = {
@@ -13,7 +15,7 @@ const formConfigurations = {
         { name: "level", label: "Уровень", type: "select", options: ["INTERN", "JUNIOR", "MIDDLE", "SENIOR", "LEAD"], required: true },
         { name: "status", label: "Статус", type: "select", options: ["ON_PROBATION", "FAILED_PROBATION", "PERMANENT_EMPLOYEE", "DISMISSED"], required: true },
         { name: "department", label: "Отдел", type: "text", required: true },
-        { name: "vacationDays", label: "Дни отпуска", type: "text", required: false },
+        { name: "vacationDays", label: "Дни отпуска", type: "number", required: false },
         { name: "salary", label: "Зарплата", type: "number", required: true },
         { name: "employmentDate", label: "Дата трудоустройства", type: "date", required: true }
     ],
@@ -36,7 +38,14 @@ const formConfigurations = {
     ]
 };
 
-function AddModal({ type, onClose, onSuccess, availableUserIds, availableVacancyIds }) {
+const russian = {
+    employee: "Сотрудник добавлен успешно",
+    vacation: "Отпуск добавлен успешно",
+    vacancy: "Вакансия добавлена успешно",
+    candidate: "Кандидат добавлен успешно"
+}
+
+function AddModal({ type, onClose, onSuccess, onError, availableUserIds, availableVacancyIds }) {
     const formFields = formConfigurations[type] || [];
     const initialData = formFields.reduce((acc, field) => {
         acc[field.name] = field.type === "checkbox" ? false : ""; // Начальное значение
@@ -44,6 +53,7 @@ function AddModal({ type, onClose, onSuccess, availableUserIds, availableVacancy
     }, {});
 
     const [formData, setFormData] = useState(initialData);
+    const { notifications, addNotification, removeNotification } = useNotification();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -60,8 +70,13 @@ function AddModal({ type, onClose, onSuccess, availableUserIds, availableVacancy
             }
             await axios.post(
                 url,
-                formData);
-            onSuccess(`/${type}`); // Обновить данные
+                formData).then(r => {
+                    onSuccess(russian[type]); // Обновить данные
+                }
+
+            ).catch(e =>
+                onError("Ошибка при добавлении")
+            );
             onClose(); // Закрыть модальное окно
         } catch (error) {
             console.error(`Error adding ${type}:`, error);
@@ -185,6 +200,7 @@ function AddModal({ type, onClose, onSuccess, availableUserIds, availableVacancy
                     </button>
                 </div>
             </div>
+            <Notification notifications={notifications} removeNotification={removeNotification} />
         </div>
     );
 }

@@ -57,11 +57,23 @@ public class EmployeeService {
         employee.setDismissalDate(LocalDate.now());
         employee.setDismissalReason(reason);
         employee.setStatus(EmployeeStatus.DISMISSED);
-        return EmployeeMapper.INSTANCE.toResponseDTO(employeeRepository.save(employee));
+        if (employee.getUser() != null) {
+            Long userId = employee.getUser().getId();
+            employee.setUser(null);
+            userRepository.deleteById(userId);
+        }
+        employee = (employeeRepository.save(employee));
+        return EmployeeMapper.INSTANCE.toResponseDTO(employee);
     }
 
     public void deleteEmployee(Long id) {
+        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException("Employee was not found"));
+        if (employee.getUser() != null) {
+            Long userId = employee.getUser().getId();
+            employee.setUser(null);
+            userRepository.deleteById(userId);
+        }
         vacationRepository.deleteAllByEmployee_Id(id);
-        employeeRepository.deleteById(id);
+        employeeRepository.delete(employee);
     }
 }

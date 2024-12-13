@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
+import useNotification from "../useNotification";
+import Notification from "../Notification";
 
 const API_BASE_URL = "http://localhost:8080/api"
 
@@ -9,7 +11,8 @@ function VacationRequest() {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
 
-    // Fetch user's vacation requests
+    const { notifications, addNotification, removeNotification } = useNotification();
+
     useEffect(() => {
         const fetchVacations = async () => {
             try {
@@ -22,34 +25,39 @@ function VacationRequest() {
         fetchVacations();
     }, []);
 
-    // Submit a new vacation request
+    const today = new Date().toISOString().split("T")[0]
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
         setSuccess(null);
 
         if (!newVacation.startDate || !newVacation.endDate) {
-            setError("Please fill in all fields.");
+            setError("Заполните все поля");
+            return;
+        }
+
+        if (newVacation.endDate < newVacation.startDate) {
+            setError("Дата окончания не может быть раньше даты начала.");
             return;
         }
 
         try {
             await axios.post(API_BASE_URL + "/vacation", newVacation);
-            setSuccess("Vacation request submitted successfully!");
+            addNotification("Запрос на отпуск успешно отправлен", "success")
+            // setSuccess("Запрос на отпуск успешно отправлен");
             setNewVacation({ startDate: "", endDate: "" });
-            // Refresh vacations
             const response = await axios.get(API_BASE_URL+ "/vacation/my");
             setVacations(response.data);
         } catch (err) {
-            setError("Failed to submit vacation request. Please try again.");
+            // setError("Ошибка отправки запросы. Попробуйте снова");
+            addNotification("Не удалось отправить запрос. Попробуйте снова", "error")
         }
     };
 
     return (
         <div className="p-4">
             <h2 className="text-2xl font-bold mb-4">Мои отпуска</h2>
-            {error && <p className="text-red-500">{error}</p>}
-            {success && <p className="text-green-500">{success}</p>}
             <table className="min-w-full bg-white border mb-6">
                 <thead>
                 <tr>
@@ -74,9 +82,15 @@ function VacationRequest() {
                     <label className="block mb-1 font-medium">Дата начала</label>
                     <input
                         type="date"
+                        min={today}
+                        max={newVacation.endDate}
                         value={newVacation.startDate}
                         onChange={(e) =>
-                            setNewVacation((prev) => ({ ...prev, startDate: e.target.value }))
+                            setNewVacation((prev) => ({
+                                ...prev,
+                                startDate: e.target.value,
+                                endDate: prev.endDate < e.target.value ? "" : prev.endDate
+                            }))
                         }
                         className="max-width-500px border px-4 py-2 rounded"
                     />
@@ -85,9 +99,10 @@ function VacationRequest() {
                     <label className="block mb-1 font-medium">Дата окончания</label>
                     <input
                         type="date"
+                        min={newVacation.startDate || today}
                         value={newVacation.endDate}
                         onChange={(e) =>
-                            setNewVacation((prev) => ({ ...prev, endDate: e.target.value }))
+                            setNewVacation((prev) => ({...prev, endDate: e.target.value}))
                         }
                         className="max-width-500px border px-4 py-2 rounded"
                     />
@@ -99,6 +114,12 @@ function VacationRequest() {
                     Отправить запрос
                 </button>
             </form>
+            <Notification
+                notifications={notifications}
+                removeNotification={removeNotification}
+                />
+            {error && <p className="text-red-500">{error}</p>}
+            {/*{success && <p className="text-green-500">{success}</p>}*/}
         </div>
     );
 }

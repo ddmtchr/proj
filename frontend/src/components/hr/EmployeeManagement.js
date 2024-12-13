@@ -9,6 +9,8 @@ function EmployeeManagement({employees, onAdd, onEdit, onDelete, onDismiss}) {
     const [dismissalReason, setDismissalReason] = useState("");
     const [employeeToDismiss, setEmployeeToDismiss] = useState(null);
 
+    const currentUsername = localStorage.getItem("username");
+
     const openDismissModal = (employee) => {
         setEmployeeToDismiss(employee);
         setShowDismissModal(true);
@@ -30,7 +32,7 @@ function EmployeeManagement({employees, onAdd, onEdit, onDelete, onDismiss}) {
             cell: ({row}) => (
                 <div className="flex justify-between items-center gap-2">
                     <div className="flex gap-2">
-                        {row.original.status !== "DISMISSED" && (
+                        {row.original.status !== "DISMISSED" && row.original.username !== currentUsername && (
                             <>
                                 <button
                                     className="bg-red-500 text-white py-1 px-3 rounded"
