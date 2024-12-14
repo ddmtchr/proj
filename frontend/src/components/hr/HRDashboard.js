@@ -16,7 +16,7 @@ function HRDashboard() {
     const [activeTab, setActiveTab] = useState(() => {
         return localStorage.getItem("activeTab") || "employee";
     });
-    const [availableUserIds, setAvailableUserIds] = useState([]);
+    const [availableUsers, setAvailableUsers] = useState([]);
     const [availableVacancyIds, setAvailableVacancyIds] = useState([]);
     const [employees, setEmployees] = useState([]);
     const [vacations, setVacations] = useState([]);
@@ -37,7 +37,7 @@ function HRDashboard() {
 
     useEffect(() => {
         if (currentType === "employee") {
-            fetchAvailableIds(API_BASE_URL + "/users/notRegistered").then(setAvailableUserIds);
+            fetchAvailableIds(API_BASE_URL + "/users/notRegistered").then(setAvailableUsers);
         } else if (currentType === "candidate") {
             fetchAvailableIds(API_BASE_URL + "/vacancy").then(setAvailableVacancyIds);
         }
@@ -46,7 +46,7 @@ function HRDashboard() {
     async function fetchAvailableIds(endpoint) {
         try {
             const response = await axios.get(endpoint)
-            return response.data.map(o => o.id)
+            return response.data
         } catch (error) {
             console.error(error);
             return [];
@@ -168,7 +168,7 @@ function HRDashboard() {
             axios
                 .put(API_BASE_URL + `/vacancy/${vacancy.id}/reopen`)
                 .then(() => {
-                    addNotification(`Вакансия ${id} обновлена (${newStatus})`, "success")
+                    addNotification(`Вакансия ${vacancy.id} обновлена (${newStatus})`, "success")
                     refreshData("/vacancy")
                 })
                 .catch((error) => addNotification(`Ошибка при обновлении вакансии`, "error"));
@@ -176,7 +176,7 @@ function HRDashboard() {
             axios
                 .put(API_BASE_URL + `/vacancy/${vacancy.id}/close`)
                 .then(() => {
-                    addNotification(`Вакансия ${id} обновлена (${newStatus})`, "success")
+                    addNotification(`Вакансия ${vacancy.id} обновлена (${newStatus})`, "success")
                     refreshData("/vacancy")
                 })
                 .catch((error) => addNotification(`Ошибка при обновлении вакансии`, "error"));
@@ -356,7 +356,7 @@ function HRDashboard() {
                     onDelete={handleDeleteCandidate}
                 />
             )}
-            {activeTab === "profile" && (<UserProfile/>)}
+            {activeTab === "profile" && (<UserProfile canEdit={true} onEdit={handleEditEmployee}/>)}
             {editModalData && (
                 <EditModal
                     type={editModalData.type}
@@ -373,7 +373,7 @@ function HRDashboard() {
                     onClose={handleCloseAddModal}
                     onSuccess={handleSuccessModal}
                     onError={handleFailureModal}
-                    availableUserIds={availableUserIds}
+                    availableUsers={availableUsers}
                     availableVacancyIds={availableVacancyIds}
                 />
             )}

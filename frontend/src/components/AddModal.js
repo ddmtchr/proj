@@ -45,7 +45,7 @@ const russian = {
     candidate: "Кандидат добавлен успешно"
 }
 
-function AddModal({ type, onClose, onSuccess, onError, availableUserIds, availableVacancyIds }) {
+function AddModal({ type, onClose, onSuccess, onError, availableUsers, availableVacancyIds }) {
     const formFields = formConfigurations[type] || [];
     const initialData = formFields.reduce((acc, field) => {
         acc[field.name] = field.type === "checkbox" ? false : ""; // Начальное значение
@@ -106,9 +106,9 @@ function AddModal({ type, onClose, onSuccess, onError, availableUserIds, availab
                                     className="px-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                                 >
                                     <option value="">Select User ID</option>
-                                    {availableUserIds.map((id) => (
-                                        <option key={id} value={id}>
-                                            {id}
+                                    {availableUsers.map((user) => (
+                                        <option key={user.id} value={user.id}>
+                                            {user.username} ({user.id})
                                         </option>
                                     ))}
                                 </select>

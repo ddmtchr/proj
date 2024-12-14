@@ -24,13 +24,25 @@ function LoginPage() {
                     localStorage.setItem("role", data.role);
                     navigate("/dashboard");
                 }
-            ).catch(e => addNotification("Ошибка авторизации или регистрации. Проверьте данные.", "error"));
+            ).catch(e => {
+                console.log(e)
+                if (e.response.status === 401) {
+                    addNotification("Вы успешно зарегистрированы, но учетная запись сотрудника не создана. Обратитесь к HR для регистрации", "warning")
+
+                } else {
+                    addNotification("Ошибка авторизации или регистрации. Проверьте данные.", "error")
+                }
+            });
 
         } else {
             await register(username, password, ROLE_PREFIX + role).then(data => {
                     addNotification("Вы успешно зарегистрировались", "success")
                 }
-            ).catch(e => addNotification("Ошибка авторизации или регистрации. Проверьте данные.", "error"));
+            ).catch(e => {
+
+                addNotification("Ошибка авторизации или регистрации. Проверьте данные.", "error")
+
+            });
             setIsLogin(true);
         }
     };

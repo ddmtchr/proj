@@ -38,7 +38,7 @@ function EmployeeDashboard() {
             </div>
 
             {activeEmployeeTab === "vacation" && <VacationRequest/>}
-            {activeEmployeeTab === "profile" && <UserProfile/>}
+            {activeEmployeeTab === "profile" && <UserProfile canEdit={false}/>}
         </div>
     );
 }

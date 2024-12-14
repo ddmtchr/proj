@@ -2,8 +2,6 @@ import React, {useState} from "react";
 import {PencilIcon, TrashIcon} from "@heroicons/react/24/outline";
 import Table from "../Table";
 
-const API_BASE_URL = "http://localhost:8080/api"
-
 function EmployeeManagement({employees, onAdd, onEdit, onDelete, onDismiss}) {
     const [showDismissModal, setShowDismissModal] = useState(false);
     const [dismissalReason, setDismissalReason] = useState("");
@@ -44,18 +42,22 @@ function EmployeeManagement({employees, onAdd, onEdit, onDelete, onDismiss}) {
                         )}
                     </div>
                     <div className="flex justify-end gap-2">
-                        <button
-                            className="border-2 border-gray-500 py-1 px-1 rounded"
-                            onClick={() => handleEdit(row.original)}
-                        >
-                            <PencilIcon className="h-5 w-5"/>
-                        </button>
-                        <button
-                            className="box-border border-2 border-gray-500 py-1 px-1 rounded"
-                            onClick={() => handleDelete(row.original.id)}
-                        >
-                            <TrashIcon className="h-5 w-5"/>
-                        </button>
+                        {row.original.username !== currentUsername && (
+                            <>
+                                <button
+                                    className="border-2 border-gray-500 py-1 px-1 rounded"
+                                    onClick={() => handleEdit(row.original)}
+                                >
+                                    <PencilIcon className="h-5 w-5"/>
+                                </button>
+                                <button
+                                    className="box-border border-2 border-gray-500 py-1 px-1 rounded"
+                                    onClick={() => handleDelete(row.original.id)}
+                                >
+                                    <TrashIcon className="h-5 w-5"/>
+                                </button>
+                            </>
+                        )}
                     </div>
                 </div>
             ),

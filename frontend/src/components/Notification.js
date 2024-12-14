@@ -9,7 +9,7 @@ const Notification = ({ notifications, removeNotification }) => {
                     className={`p-4 rounded shadow-lg ${
                         notification.type === "success"
                             ? "bg-green-500 text-white"
-                            : "bg-red-500 text-white"
+                            : (notification.type === "warning" ? "bg-yellow-500 text-white" : "bg-red-500 text-white")
                     }`}
                 >
                     <div className="flex justify-between items-center">

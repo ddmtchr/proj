@@ -1,6 +1,7 @@
 package com.leti.project.controller;
 
 import com.leti.project.exception.BadRequestException;
+import com.leti.project.exception.EmployeeNotBoundException;
 import com.leti.project.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,5 +30,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<String> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EmployeeNotBoundException.class)
+    public ResponseEntity<String> handleEmployeeNotBoundException(EmployeeNotBoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 }

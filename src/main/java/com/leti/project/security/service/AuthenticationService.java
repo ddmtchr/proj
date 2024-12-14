@@ -3,6 +3,9 @@ package com.leti.project.security.service;
 import com.leti.project.dto.request.LoginRequest;
 import com.leti.project.dto.request.RegisterRequest;
 import com.leti.project.dto.response.JwtResponse;
+import com.leti.project.exception.EmployeeNotBoundException;
+import com.leti.project.exception.EmployeeNotFoundException;
+import com.leti.project.repository.EmployeeRepository;
 import com.leti.project.security.entity.Role;
 import com.leti.project.security.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final EmployeeRepository employeeRepository;
 
     public JwtResponse register(RegisterRequest request) {
         var user = User.builder()
@@ -45,7 +49,11 @@ public class AuthenticationService {
         var user = userService
                 .getByUsername(request.getUsername());
 
-        var jwt = jwtService.generateToken(user);
+        if (!employeeRepository.existsByUser_Id(user.getId())) {
+            throw new EmployeeNotBoundException("No employee bound to this user");
+        }
+
+            var jwt = jwtService.generateToken(user);
         return new JwtResponse(jwt,
                 user.getId(),
                 user.getUsername(),
