@@ -55,6 +55,8 @@ function AddModal({ type, onClose, onSuccess, onError, availableUsers, available
     const [formData, setFormData] = useState(initialData);
     const { notifications, addNotification, removeNotification } = useNotification();
 
+    const today = new Date().toISOString().split("T")[0]
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -71,7 +73,7 @@ function AddModal({ type, onClose, onSuccess, onError, availableUsers, available
             await axios.post(
                 url,
                 formData).then(r => {
-                    onSuccess(russian[type]); // Обновить данные
+                    onSuccess(russian[type]);
                 }
 
             ).catch(e =>
@@ -164,7 +166,30 @@ function AddModal({ type, onClose, onSuccess, onError, availableUsers, available
                                     ))}
                                 </select>
                             )}
-                            {field.type === "date" && field.name !== "userId" && field.name !== "vacancyId" && (
+                            {field.name === "startDate" && (
+                                <input
+                                    type="date"
+                                    min={today}
+                                    max={formData[field.name]}
+                                    name={field.name}
+                                    value={formData[field.name]}
+                                    onChange={handleChange}
+                                    className="px-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                                    required={field.required}
+                                />
+                            )}
+                            {field.name === "endDate" && (
+                                <input
+                                    type="date"
+                                    min={formData["startDate"] || today}
+                                    name={field.name}
+                                    value={formData[field.name]}
+                                    onChange={handleChange}
+                                    className="px-2 mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                                    required={field.required}
+                                />
+                            )}
+                            {field.type === "date" && field.name !== "startDate" && field.name !== "endDate" && (
                                 <input
                                     type="date"
                                     name={field.name}
