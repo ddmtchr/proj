@@ -17,7 +17,7 @@ function HRDashboard() {
         return localStorage.getItem("activeTab") || "employee";
     });
     const [availableUsers, setAvailableUsers] = useState([]);
-    const [availableVacancyIds, setAvailableVacancyIds] = useState([]);
+    const [availableVacancies, setAvailableVacancies] = useState([]);
     const [employees, setEmployees] = useState([]);
     const [vacations, setVacations] = useState([]);
     const [vacancies, setVacancies] = useState([]);
@@ -39,7 +39,7 @@ function HRDashboard() {
         if (currentType === "employee") {
             fetchAvailableIds(API_BASE_URL + "/users/notRegistered").then(setAvailableUsers);
         } else if (currentType === "candidate") {
-            fetchAvailableIds(API_BASE_URL + "/vacancy").then(setAvailableVacancyIds);
+            fetchAvailableIds(API_BASE_URL + "/vacancy").then(setAvailableVacancies);
         }
     }, [currentType]);
 
@@ -374,7 +374,7 @@ function HRDashboard() {
                     onSuccess={handleSuccessModal}
                     onError={handleFailureModal}
                     availableUsers={availableUsers}
-                    availableVacancyIds={availableVacancyIds}
+                    availableVacancies={availableVacancies}
                 />
             )}
             <Notification notifications={notifications} removeNotification={removeNotification} />
